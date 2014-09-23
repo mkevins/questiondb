@@ -80,4 +80,21 @@ class QuestionLike
     results.map { |result| Question.new(result) }
   end
 
+  def self.most_liked_questions(n)
+    results = DB.execute(<<-SQL, n)
+      SELECT
+        questions.*
+      FROM
+        question_likes INNER JOIN questions
+        ON question_likes.question_id = questions.id
+      GROUP BY
+        question_id
+      ORDER BY
+        COUNT(question_likes.user_id) DESC
+      LIMIT ?
+    SQL
+
+    results.map { |result| Question.new(result) }
+  end
+
 end

@@ -19,7 +19,7 @@ class Question
 
     DB.execute(<<-SQL, title, body, author_id)
       INSERT INTO
-        questions (title, body, author_id)
+        questions (title, body, author_id) #{}
       VALUES
         (?, ?, ?)
     SQL
@@ -69,7 +69,17 @@ class Question
     Reply.find_by_question_id(id)
   end
 
+  def likers
+    QuestionLike.likers_for_question_id(id)
+  end
 
+  def num_likes
+    QuestionLike.num_likes_for_question_id(id)
+  end
+
+  def most_liked(n)
+    QuestionLike.most_liked_questions(n)
+  end
 
 
 end

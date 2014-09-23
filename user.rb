@@ -29,6 +29,22 @@ class User
     @id = DB.last_insert_row_id
   end
 
+  def update
+    DB.execute(<<-SQL, fname, lname, id)
+      UPDATE
+        users
+      SET fname = ?,
+          lname = ?
+      WHERE users.id = ?
+    SQL
+
+  end
+
+  def save
+    id ? update : create
+  end
+
+
   def self.find_by_id(id)
     results = DB.execute(<<-SQL, id)
       SELECT
@@ -67,6 +83,32 @@ class User
      Reply.find_by_user_id(id)
   end
 
+  def liked_questions
+    QuestionLike.liked_questions_for_user_id(id)
+  end
 
+  def average_karma
+    num_likes = DB.execute(<<-SQL, id)
+      SELECT
+        COUNT(question_likes.id) AS num_likes
+      FROM
+        question_likes INNER JOIN questions
+        ON question_likes.question_id = questions.id
+      WHERE
+        questions.author_id = ?
+    SQL
+
+
+    num_questions = DB.execute(<<-SQL, id)
+      SELECT
+        COUNT(questions.id) AS num_questions
+      FROM
+        questions
+      WHERE
+        questions.author_id = ?
+    SQL
+
+    num_likes.first['num_likes'] / num_questions.first['num_questions'].to_f
+  end
 
 end
