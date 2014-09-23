@@ -1,5 +1,7 @@
 class Question
 
+  include Saveable
+
   def self.all
     results = DB.execute('SELECT * FROM questions')
     results.map { |result| Question.new(result) }
@@ -12,19 +14,6 @@ class Question
     @title = options['title']
     @body = options['body']
     @author_id = options['author_id']
-  end
-
-  def create
-    raise 'already saved!' unless self.id.nil?
-
-    DB.execute(<<-SQL, title, body, author_id)
-      INSERT INTO
-        questions (title, body, author_id) #{}
-      VALUES
-        (?, ?, ?)
-    SQL
-
-    @id = DB.last_insert_row_id
   end
 
   def self.find_by_id(id)

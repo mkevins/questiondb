@@ -1,8 +1,7 @@
-require_relative 'questions_database'
-require_relative 'user'
-require_relative 'question'
-
 class Reply
+
+  include Saveable
+
   def self.all
     results = DB.execute('SELECT * FROM replies')
     results.map { |result| Reply.new(result) }
@@ -17,18 +16,6 @@ class Reply
     @user_id = options['user_id']
   end
 
-  def create
-    raise 'already saved!' unless self.id.nil?
-
-    DB.execute(<<-SQL, question_id, parent_id, user_id)
-      INSERT INTO
-        replies (question_id, parent_id, user_id)
-      VALUES
-        (?, ?, ?)
-    SQL
-
-    @id = DB.last_insert_row_id
-  end
 
   def self.find_by_id(id)
     results = DB.execute(<<-SQL, id)

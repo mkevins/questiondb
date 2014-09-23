@@ -1,5 +1,7 @@
 class QuestionFollower
 
+  include Saveable
+
   def self.all
     results = DB.execute('SELECT * FROM question_followers')
     results.map { |result| QuestionFollower.new(result) }
@@ -13,20 +15,7 @@ class QuestionFollower
     @question_id = options['question_id']
   end
 
-  def create
-    raise 'already saved!' unless self.id.nil?
-
-    DB.execute(<<-SQL, user_id, question_id)
-      INSERT INTO
-        question_followers (user_id, question_id)
-      VALUES
-        (?, ?)
-    SQL
-
-    @id = DB.last_insert_row_id
-  end
-
-  def self.find_by_id(id)
+    def self.find_by_id(id)
     results = DB.execute(<<-SQL, id)
       SELECT
         *

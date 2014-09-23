@@ -1,8 +1,7 @@
-require_relative 'questions_database'
-require_relative 'question'
-require_relative 'reply'
-
 class User
+
+  include Saveable
+
   def self.all
     results = DB.execute('SELECT * FROM users')
     results.map { |result| User.new(result) }
@@ -15,35 +14,6 @@ class User
     @fname = options['fname']
     @lname = options['lname']
   end
-
-  def create
-    raise 'already saved!' unless self.id.nil?
-
-    DB.execute(<<-SQL, fname, lname)
-      INSERT INTO
-        users (fname, lname)
-      VALUES
-        (?, ?)
-    SQL
-
-    @id = DB.last_insert_row_id
-  end
-
-  def update
-    DB.execute(<<-SQL, fname, lname, id)
-      UPDATE
-        users
-      SET fname = ?,
-          lname = ?
-      WHERE users.id = ?
-    SQL
-
-  end
-
-  def save
-    id ? update : create
-  end
-
 
   def self.find_by_id(id)
     results = DB.execute(<<-SQL, id)

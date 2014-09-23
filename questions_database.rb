@@ -1,5 +1,11 @@
 require 'singleton'
 require 'sqlite3'
+require_relative 'saveable'
+require_relative 'user'
+require_relative 'question'
+require_relative 'reply'
+require_relative 'question_like'
+require_relative 'question_follower'
 
 class QuestionsDatabase < SQLite3::Database
 
@@ -13,41 +19,3 @@ class QuestionsDatabase < SQLite3::Database
 end
 
 DB = QuestionsDatabase.instance
-
-
-
-
-
-
-
-
-
-
-
-
-# class Professor
-#   attr_accessor :id, :first_name, :last_name, :department_id
-#
-#   def initialize(options = {})
-#     @id, @first_name, @last_name, @department_id =
-#       options.values_at('id', 'first_name', 'last_name', 'department_id')
-#   end
-#
-#   def create
-#     raise 'already saved!' unless self.id.nil?
-#
-#     # execute an INSERT; the '?' gets replaced with the value name. The
-#     # '?' lets us separate SQL commands from data, improving
-#     # readability, and also safety (lookup SQL injection attack on
-#     # wikipedia).
-#     params = [self.first_name, self.last_name, self.department_id]
-#     SchoolDatabase.instance.execute(<<-SQL, *params)
-#       INSERT INTO
-#         professors (first_name, last_name, department_id)
-#       VALUES
-#         (?, ?, ?)
-#     SQL
-#
-#     @id = SchoolDatabase.instance.last_insert_row_id
-#   end
-# end

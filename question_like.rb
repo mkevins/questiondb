@@ -1,5 +1,7 @@
 class QuestionLike
 
+  include Saveable
+
   def self.all
     results = DB.execute('SELECT * FROM question_likes')
     results.map { |result| QuestionLike.new(result) }
@@ -13,18 +15,7 @@ class QuestionLike
     @user_id = options['user_id']
   end
 
-  def create
-    raise 'already saved!' unless self.id.nil?
 
-    DB.execute(<<-SQL, question_id, user_id)
-      INSERT INTO
-        question_likes (question_id, user_id)
-      VALUES
-        (?, ?)
-    SQL
-
-    @id = DB.last_insert_row_id
-  end
 
   def self.find_by_id(id)
     results = DB.execute(<<-SQL, id)
